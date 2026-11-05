@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>연구자의 선택 – 과학자 딜레마 게임</title>
+<style>
+:root{--bg:#0b1511;--pn:#15271e;--ln:#3f6b55;--tx:#d4efdc;--dim:#8fb59f;--ac:#7dffb0;--bad:#ff6b6b;--warn:#ffd166;--bl:#6bb8ff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:"DungGeunMo","Galmuri11","Malgun Gothic","Apple SD Gothic Neo",monospace;line-height:1.6;background-image:repeating-linear-gradient(0deg,rgba(0,0,0,.2) 0 1px,transparent 1px 3px)}
+#app{max-width:780px;margin:0 auto;padding:12px}
+.box{background:var(--pn);border:3px solid var(--ln);box-shadow:4px 4px 0 #000;padding:12px;margin-bottom:12px;animation:in .3s}
+@keyframes in{from{opacity:0;transform:translateY(8px)}}
+h1{font-size:22px;margin:0 0 6px;color:var(--ac);text-shadow:0 0 10px var(--ac)}
+.hud{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;position:relative}
+.st b{font-size:12px;display:flex;justify-content:space-between;color:var(--dim)}
+.bar{height:10px;background:#07100c;border:2px solid var(--ln)}
+.bar i{display:block;height:100%;transition:width .6s}
+.bar.f{animation:fb .6s}
+@keyframes fb{50%{box-shadow:0 0 12px #fff}}
+.aff{grid-column:1/3;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;border-top:2px dashed var(--ln);padding-top:6px}
+.aff div{font-size:11px;color:var(--dim)}
+.aff .bar{height:6px}
+.snd{position:absolute;right:0;top:-2px;background:none;border:0;width:auto;padding:0;margin:0;box-shadow:none;font-size:16px}
+.stage{position:relative;height:210px;overflow:hidden;border:3px solid var(--ln);box-shadow:4px 4px 0 #000;margin-bottom:12px;transition:background .5s}
+.stage.sh{animation:sh .45s}.stage.gl{animation:gl .6s}
+@keyframes sh{20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+@keyframes gl{50%{box-shadow:inset 0 0 60px #7dffb0aa,4px 4px 0 #000}}
+.floor{position:absolute;left:-20%;right:-20%;bottom:0;height:50%;background:linear-gradient(#7dffb033 1px,transparent 1px),linear-gradient(90deg,#7dffb033 1px,transparent 1px);background-size:30px 30px;transform:perspective(140px) rotateX(58deg);transform-origin:bottom;animation:fl 1.6s linear infinite}
+@keyframes fl{to{background-position:0 30px}}
+.pt{position:absolute;bottom:-20px;opacity:.6;animation:fu linear infinite}
+@keyframes fu{to{transform:translateY(-260px) rotate(180deg);opacity:0}}
+.prop{position:absolute;bottom:26px;font-size:34px;opacity:.85;animation:bob 3s ease-in-out infinite}
+.who{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);text-align:center}
+.who .em{font-size:76px;line-height:1;display:block;animation:bob 1.6s ease-in-out infinite;filter:drop-shadow(0 0 16px var(--cc))}
+.who .nm{font-size:12px;color:var(--cc);background:#000a;padding:0 8px;border:2px solid var(--cc)}
+.rc{position:absolute;right:-22px;top:-8px;font-size:34px;animation:pp .9s forwards}
+@keyframes pp{0%{transform:scale(0)}40%{transform:scale(1.4)}100%{transform:scale(1) translateY(-14px);opacity:0}}
+@keyframes bob{50%{transform:translateY(-8px)}}
+.cond{position:absolute;left:8px;top:8px;background:#000b;border:2px solid var(--warn);color:var(--warn);font-size:12px;padding:1px 8px;max-width:75%}
+.rd{position:absolute;right:8px;top:8px;background:#000b;border:2px solid var(--ln);color:var(--dim);font-size:12px;padding:1px 8px}
+.txt{font-size:15px;white-space:pre-line;min-height:70px}
+.tag{display:inline-block;font-size:11px;border:2px solid var(--ln);padding:0 6px;color:var(--dim);margin-bottom:6px}
+.name{font-size:13px;margin-bottom:2px}
+button{font:inherit;color:var(--tx);background:#0f1f17;border:3px solid var(--ln);padding:10px 12px;width:100%;text-align:left;cursor:pointer;margin-top:8px;box-shadow:3px 3px 0 #000;transition:transform .1s}
+button:hover,button:focus-visible{background:#1d3a2b;border-color:var(--ac);outline:none;transform:translateX(4px)}
+button.go{text-align:center;color:var(--ac)}
+.fx{font-size:13px;margin-top:8px}.up{color:var(--ac)}.dn{color:var(--bad)}
+.bt{border-color:var(--warn);background:#2a2610;animation:in .4s,glow 1.2s 3}
+@keyframes glow{50%{box-shadow:0 0 20px var(--warn)}}
+.q{border-left:4px solid var(--bl);padding-left:10px;margin:8px 0;font-size:14px}
+.row{display:flex;justify-content:space-between;font-size:14px;margin:4px 0}
+.chip{display:inline-block;font-size:12px;padding:0 6px;margin:2px;border:2px solid}
+.chip.N{color:var(--warn)}.chip.V{color:var(--ac)}
+input,textarea,select{font:inherit;width:100%;background:#0a1510;color:var(--tx);border:3px solid var(--ln);padding:8px;margin-top:8px}
+textarea{min-height:64px;resize:vertical}
+.post{border:2px solid var(--ln);background:#0f1f17;padding:8px;margin-top:8px;font-size:14px;white-space:pre-wrap;word-break:break-word}
+.rep{margin:6px 0 0 18px;border-left:3px solid var(--warn);padding-left:8px;font-size:13px;white-space:pre-wrap;word-break:break-word}
+.mini{display:inline-block;width:auto;padding:0 8px;margin:6px 6px 0 0;font-size:12px;box-shadow:none}
+.sb{display:flex;height:16px;border:2px solid var(--ln);margin:6px 0}.sb i{display:block;height:100%}
+.nt{font-size:12px;color:var(--warn);min-height:18px;cursor:default}
+@media(max-width:480px){.who .em{font-size:56px}.stage{height:190px}}
+</style>
+</head>
+<body>
+<div id="app">
+<div class="box hud" id="hud"></div>
+<div class="stage" id="stage"></div>
+<div id="main"></div>
+</div>
+<script>
+const CH={R:{n:"로자리움 소장",e:"🧑‍🔬",c:"#7dffb0"},M:{n:"민 연구원",e:"🧑‍💻",c:"#6bb8ff"},K:{n:"강 대령",e:"🎖️",c:"#ffb347"},J:{n:"서윤 기자",e:"🎙️",c:"#ff8fb1"}};
+const PL=[["#10331f","🧪🖥️","🔬⚗️"],["#3a2610","🛡️🛰️","🚁🔭"],["#35132d","📰📺","🎙️💡"],["#10294a","🏥💉","🩺🧬"],["#4a1c0a","🌲🔥","🚒🌲"],["#23233f","🏛️📜","🖋️⚖️"]];
+// [선택지, 입장(N=가치중립,V=가치지향), [성과,피해,신뢰,팀], 결과, 호감도, 플래그]
+const SC=[
+{c:"R",p:0,cond:"연구비 심사 7일 전",tx:"퀸, ECHO-9 합성이 코앞이야. 안전 검증엔 6개월이 더 필요하지만, 가속 실험을 하면 심사 전에 성과를 낼 수 있어. 다만 주변 주민에게 노출 위험이 있지.",ch:[
+["안전 검증을 끝낼 때까지 미룬다","V",[-5,-5,10,-10],"주민은 안전했지만 연구비 심사가 불안해졌다.","R-8,M8"],
+["가속 실험을 강행한다","N",[25,25,-15,10],"획기적 데이터! 그러나 누출로 주민 일부가 병원에 실려 갔다.","R8,M-12","risk"],
+["위험을 공개하고 외부 안전위원회 검토를 받는다","V",[8,-3,15,-3],"일정은 늦어졌지만 보완 장치를 갖추고 승인받았다.","R2,M10"]]},
+{c:"K",p:1,cond:"연구비 +30억 · 기밀 유지",tx:"ECHO-9은 초경량 방탄 소재로 쓸 수 있습니다. 결과를 제공하면 대규모 지원을 약속하죠. 과학자는 발견만 하면 되고, 쓰임은 사회의 몫 아닙니까?",ch:[
+["“쓰임은 사회의 몫” – 결과를 제공한다","N",[15,20,-10,25],"팀은 커졌지만 기술이 분쟁 지역 장비에 쓰이기 시작했다.","K12,M-10","mil"],
+["비공격용 조건을 걸고 제공한다","V",[8,7,5,10],"조건부 협약 체결. 실제 이행 여부는 불확실하다.","K3,M3"],
+["군사 목적 제공을 거절한다","V",[-5,-8,12,-20],"지원이 끊기고 팀원 일부가 떠났지만 자부심은 남았다.","K-12,M8"]]},
+{c:"M",p:0,cond:"논문 마감 3일 전",tx:"큰일이에요. 공정을 조금만 바꾸면 독성 미세입자가 만들어져요. 그대로 논문을 내면 악용될 수 있는데, 안 내면 성과를 인정받기 어려워요.",ch:[
+["논문을 전면 공개한다 (학문의 자유)","N",[20,20,0,5],"학계가 환호했다. 몇 달 뒤 공정을 응용한 유해 물질 사례가 보고됐다.","M-8,J-5"],
+["위험 공정은 빼고 공개하고 기관에 경고한다","V",[8,-8,12,0],"불완전 공개라는 비판도 있었지만 악용 위험은 크게 줄었다.","M10,J5"],
+["위험을 알리지 않고 연구를 계속한다","N",[10,15,-20,0],"아직 드러난 문제는 없다. 민은 불안한 눈빛으로 당신을 본다.","M-15"]]},
+{c:"J",p:2,cond:"보도 24시간 전",tx:"연구소의 위험 평가 자료를 보고 싶습니다. 주민들은 알 권리가 있어요. 공개하면 연구가 위축될 수 있다는 것도 알고 있습니다.",ch:[
+["자료를 모두 공개한다","V",[-3,-8,15,-8],"논란은 있었지만 주민 신뢰가 높아졌다.","J10,R-6"],
+["연구 기밀을 이유로 거절한다","N",[3,8,-15,5],"‘밀실 연구’라는 기사가 나왔다.","J-12,R6"],
+["핵심만 정리해 주민 설명회를 연다","V",[3,-3,10,0],"질문은 많았지만 소통의 물꼬를 텄다.","J5"]]},
+{c:"R",p:3,cond:"환자 단체의 간절한 요청",tx:"ECHO-9을 인공관절 코팅에 쓰면 수많은 환자가 다시 걷게 될 걸세. 병원에서는 동물 실험을 건너뛰고 바로 임상에 들어가자는군.",ch:[
+["절차를 건너뛰고 임상에 들어간다","N",[20,18,-10,10],"일부 환자는 호전됐지만 부작용 사례도 나왔다.","R8,M-8"],
+["정식 단계를 밟되 속도를 높일 방안을 찾는다","V",[10,-5,10,-3],"1년 뒤 안전하게 임상에 들어갔고, 환자 가족의 감사 편지가 도착했다.","R-2,M8"],
+["위험하다며 응용 연구를 접는다","V",[-10,-5,2,-8],"안전했지만 기다리던 환자들은 크게 실망했다.","R-8"]]},
+{c:"M",p:0,cond:"인턴 가족의 어려운 사정",tx:"인턴 하준이가 부족한 데이터를 ‘보정’한 것 같아요. 집안 사정이 어려워서 이 성과가 꼭 필요하대요. 어떻게 하죠?",ch:[
+["눈감아 준다","N",[10,10,-15,5],"논문은 나갔지만 불안한 비밀이 팀에 남았다.","M-12,R5"],
+["사실을 바로잡고 재실험하며 하준을 돕는다","V",[-3,-3,12,0],"일정은 밀렸지만 팀은 신뢰를 되찾았다.","M12,R-3"],
+["연구 부정으로 즉시 보고하고 퇴출한다","V",[-2,-3,5,-8],"원칙은 지켰지만 팀 분위기는 얼어붙었다.","M-3,R-3"]]},
+{c:"J",p:2,cond:"개도국 정수 필터 프로젝트",tx:"ECHO-9로 값싼 정수 필터를 만들 수 있대요. 특허를 풀면 수백만 명이 깨끗한 물을 마실 수 있어요. 하지만 연구소는 특허 수익이 필요하죠.",ch:[
+["특허를 독점하고 높은 가격에 판매한다","N",[5,3,-12,20],"수익은 늘었지만 ‘가난한 이들의 물을 팔았다’는 비판이 일었다.","J-10,R8"],
+["핵심 기술을 무상 공개한다","V",[10,-12,20,-12],"많은 마을에 깨끗한 물이 닿았다. 연구소 재정은 빠듯해졌다.","J12,R-8"],
+["개도국엔 저가, 선진국엔 정상가 라이선스를 준다","V",[8,-8,12,8],"수익과 공익을 절충한 모델이 주목받았다.","J6,R3"]]},
+{c:"R",p:0,cond:"동물실험 심의 대기 중",tx:"독성 시험에 동물이 수백 마리 필요하네. 대체시험법은 아직 믿을 만한지 몰라서, 쓰면 6개월이 더 걸려.",ch:[
+["기존 방식대로 동물실험을 진행한다","N",[12,0,-8,3],"자료는 빨리 쌓였지만 동물단체의 항의를 받았다.","R4,J-5"],
+["대체시험을 병행해 동물 수를 최소화한다","V",[5,-3,10,-3],"자료의 신뢰도가 높아졌다.","M5,J5"],
+["동물 보호 지침이 정리될 때까지 미룬다","V",[-6,0,6,-8],"윤리적이지만 일정이 크게 밀렸다.","R-6"]]},
+{c:"K",p:1,cond:"국가안보 사업 · 비공개",tx:"ECHO-9 센서를 도시의 CCTV에 쓰면 범죄를 크게 줄일 수 있습니다. 시민들의 이동 정보가 수집되겠지만 안전이 우선이지요.",ch:[
+["전면 설치에 협력한다","N",[10,18,-12,15],"범죄는 줄었지만 시민 감시 논란이 거세졌다.","K10,J-8"],
+["개인 식별을 막는 설계를 조건으로 제안한다","V",[6,-3,10,5],"안전과 사생활 사이의 접점을 찾았다.","J8"],
+["사생활 침해를 우려해 사업에서 빠진다","V",[-4,-5,8,-12],"예산은 줄었지만 시민단체가 지지 성명을 냈다.","K-8,J8"]]},
+{c:"M",p:0,cond:"폐기물 처리비 폭증",tx:"폐기물 정화 비용이 한 달 예산을 넘었어요. 하천에 조금씩 흘려보내자는 얘기까지 나오는데…",ch:[
+["몰래 소량 방류한다","N",[5,22,-15,15],"비용은 줄었지만 하천에 물고기가 떠올랐다.","M-12,R5","env"],
+["비용이 들어도 정화 시설을 증설한다","V",[-3,-6,10,-12],"예산은 빠듯하지만 안전하게 처리했다.","M8"],
+["폐기물을 재활용하는 기술을 연구한다","V",[10,-8,12,-4],"새 기술이 나와 폐기물이 자원이 되었다!","M10,R3"]]},
+{c:"J",p:2,cond:"시민 강연 요청",tx:"ECHO-9 강연을 해 주세요. 사람들은 희망적인 이야기를 듣고 싶어 해요. 위험까지 솔직히 말할지는 연구자의 선택이에요.",ch:[
+["장점만 강조해 기대를 한껏 높인다","N",[8,8,-12,8],"후원은 늘었지만 훗날 ‘과장 홍보’ 논란이 일었다.","J-8,R5"],
+["장점과 한계·위험을 함께 설명한다","V",[3,-4,12,2],"청중의 질문이 깊어지고 연구가 신뢰를 얻었다.","J10"],
+["강연을 거절하고 연구에만 집중한다","N",[2,2,-4,0],"연구는 이어졌지만 사회와의 거리는 멀어졌다.","J-5"]]},
+{c:"K",p:4,cond:"재난 현장 · 긴급",tx:"대형 산불입니다! ECHO-9 방화 코팅을 지금 투입하면 마을을 구할 수 있지만, 안전 검증은 끝나지 않았습니다. 판단은 연구자의 몫입니다.",ch:[
+["검증 없이 즉시 투입한다","N",[12,10,0,5],"마을은 구했지만 일부 소방관이 코팅 가루에 노출됐다.","K10,M-6"],
+["전문가와 보호 장비를 갖춰 제한 투입한다","V",[10,-4,15,3],"안전 수칙 아래 마을이 지켜졌다. 연구소가 ‘영웅’으로 소개됐다.","K8,M8"],
+["검증이 없다며 투입을 거부한다","V",[-5,5,-10,-5],"원칙은 지켰지만 피해 마을의 원망을 들었다.","K-8"]]},
+{c:"R",p:5,cond:"소장직 제안 · 침묵의 조건",tx:"내 뒤를 이을 사람은 자네야. 대신 지난 위험 평가서의 불리한 부분은 고쳐서 제출해 주게. 연구소를 위해서야.",ch:[
+["제안을 받아들이고 보고서를 고친다","N",[8,12,-18,12],"소장 자리에 올랐지만 마음이 무겁다.","R12,M-12"],
+["고치지 않고 정직하게 제출한다","V",[-4,-4,12,-8],"소장 후보에선 멀어졌지만 팀이 지지했다.","R-10,M10"],
+["수락하되 투명성 규정을 조건으로 건다","V",[6,-6,14,3],"쉽지 않았으나 개혁의 기회를 얻었다.","R-3,M8"]]}
+];
+const FIN={c:"R",p:5,cond:"연구 계속 여부 최종 심사",tx:f=>"사회적 논란이 커졌네."+(f.mil?" 군사 협력 사실이 보도됐고,":"")+(f.risk?" 과거 누출 사고가 다시 거론되고,":"")+(f.env?" 하천 오염 의혹도 불거졌고,":"")+" 지원 기관은 연구 중단을 검토 중이야. 중단하면 연구비와 팀이 흩어지겠지. 마지막 결정을 내려 주게.",ch:[
+["윤리 심의 체계를 도입하고 연구를 계속한다","V",[10,-10,15,-5],"사회적 영향을 점검하는 위원회가 생겼다. 속도는 느려졌지만 방향이 잡혔다.","R2,M8,J8"],
+["연구를 즉시 중단한다","V",[-20,-15,8,-30],"위험은 막았지만 팀은 해체되고 성과는 다른 기관에 넘어갔다.","R-8,M-3"],
+["“나는 연구만 한다” – 논란과 무관하게 계속한다","N",[20,15,-20,10],"연구는 계속되었지만 사회와의 신뢰 격차는 더 커졌다.","R5,M-8,J-10"]]};
+const BT=["✨ 돌파구! ECHO-9이 정수 필터·인공관절 등 사회에 도움이 되는 방향으로 응용되기 시작했다!","🌟 국제 학술지가 ‘책임 있는 연구의 모범’으로 소개했고 공동연구 제안이 쏟아졌다!"];
+const $=id=>document.getElementById(id),cl=v=>Math.max(0,Math.min(100,v));
+let s,aff,O,i,flags,log,bt,T,snd=true,AC;
+function beep(f,d=.1){if(!snd)return;try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain();o.type="square";o.frequency.value=f;g.gain.value=.03;o.connect(g);g.connect(AC.destination);o.start();o.stop(AC.currentTime+d)}catch(e){}}
+function hud(){const st=[["res","연구 성과","var(--bl)"],["harm","사회적 피해","var(--bad)"],["trust","사회적 신뢰","var(--ac)"],["team","연구팀·연구비","var(--warn)"]];
+$("hud").innerHTML=`<button class="snd" onclick="snd=!snd;this.textContent=snd?'🔊':'🔇'">🔊</button>`+st.map(x=>`<div class="st"><b><span>${x[1]}</span><span id="v${x[0]}"></span></b><div class="bar" id="b${x[0]}"><i id="i${x[0]}" style="background:${x[2]}"></i></div></div>`).join("")+`<div class="aff">${Object.keys(CH).map(k=>`<div>${CH[k].e} ${CH[k].n}<div class="bar"><i id="a${k}" style="background:${CH[k].c}"></i></div></div>`).join("")}</div>`}
+function upd(ch){for(const k in s){$("v"+k).textContent=s[k];$("i"+k).style.width=s[k]+"%";if(ch&&ch[k]){const b=$("b"+k);b.classList.remove("f");void b.offsetWidth;b.classList.add("f")}}for(const k in aff)$("a"+k).style.width=aff[k]+"%"}
+function fxs(el,c){const g=$("stage");g.classList.remove("sh","gl");void g.offsetWidth;g.classList.add(c)}
+function stage(c,r){const ch=CH[c.c],p=PL[c.p];let h=`<div class="floor"></div>`;
+for(let n=0;n<9;n++)h+=`<span class="pt" style="left:${Math.random()*95}%;font-size:${12+Math.random()*14}px;animation-duration:${4+Math.random()*5}s;animation-delay:-${Math.random()*6}s">${["⚛️","🧬","💠","✦","🔹"][n%5]}</span>`;
+h+=`<span class="prop" style="left:6%">${p[1]}</span><span class="prop" style="right:6%;animation-delay:-1s">${p[2]}</span>`;
+h+=`<div class="who" style="--cc:${ch.c}"><span class="em">${ch.e}</span><span class="nm">${ch.n}</span></div><div class="cond">조건: ${c.cond}</div><div class="rd">ROUND ${r}/${O.length}</div>`;
+const g=$("stage");g.style.background=`radial-gradient(circle at 50% 80%,${PL[c.p][0]},#050a08)`;g.innerHTML=h}
+function start(){s={res:30,harm:10,trust:60,team:60};aff={R:50,M:50,K:50,J:50};i=0;flags={};log=[];bt=0;
+const rest=SC.slice(1).sort(()=>Math.random()-.5).slice(0,8);O=[SC[0],...rest,FIN];
+hud();upd();$("stage").innerHTML=`<div class="floor"></div><div class="who" style="--cc:#7dffb0"><span class="em">🧪</span></div>`;$("stage").style.background="radial-gradient(circle at 50% 80%,#10331f,#050a08)";
+$("main").innerHTML=`<div class="box"><h1>연구자의 선택</h1><div class="txt">당신은 TSF 연구소의 신진 연구원 퀸입니다.
+신소재 ‘ECHO-9’를 개발하며 소장·동료·군 관계자·기자와 얽힌 10번의 선택을 하게 됩니다. (상황은 매번 달라집니다)
+사람마다 내세우는 조건이 다르고, 선택에 따라 연구는 사회에 도움이 될 수도, 큰 피해를 줄 수도 있습니다.
+“과학은 가치 중립적이어야 하는가, 가치 지향적이어야 하는가?”</div><button class="go" onclick="show()">▶ 게임 시작</button></div>`}
+function show(){beep(440);const c=O[i];stage(c,i+1);const t=typeof c.tx==="function"?c.tx(flags):c.tx,ch=CH[c.c];
+$("main").innerHTML=`<div class="box" id="bx"><div class="name" style="color:${ch.c}">${ch.e} ${ch.n}</div><div class="txt" id="tx"></div></div><div id="chs"></div>`;
+let n=0,done=false;const fin=()=>{if(done)return;done=true;clearInterval(T);$("tx").textContent=t;$("chs").innerHTML=c.ch.map((o,k)=>`<button onclick="pick(${k})">${"ABC"[k]}. ${o[0]}</button>`).join("")};
+clearInterval(T);T=setInterval(()=>{n+=2;$("tx").textContent=t.slice(0,n);if(n%6==0)beep(300+Math.random()*80,.03);if(n>=t.length)fin()},24);$("bx").onclick=fin}
+function pick(k){const c=O[i],o=c.ch[k],[r,h,t,m]=o[2];
+s.res=cl(s.res+r);s.harm=cl(s.harm+h);s.trust=cl(s.trust+t);s.team=cl(s.team+m);
+let da=0;o[4].split(",").forEach(x=>{const key=x[0],v=+x.slice(1);aff[key]=cl(aff[key]+v*2);if(key===c.c)da=v});
+if(o[5])flags[o[5]]=1;log.push(o[1]);
+const g=h>=10?"sh":(t>=10||h<=-6)?"gl":"";if(g)fxs(0,g);beep(h>=10?120:t>=10?660:350,.2);
+const rc=document.createElement("span");rc.className="rc";rc.textContent=da>0?"😊":da<0?"💢":"🤔";document.querySelector(".who").appendChild(rc);
+let extra="";if(bt<2&&s.harm<=30&&s.trust>=55&&s.res>=45&&i<O.length-1){s.res=cl(s.res+6);s.harm=cl(s.harm-3);s.trust=cl(s.trust+6);s.team=cl(s.team+3);extra=`<div class="box bt"><div class="txt" style="min-height:0">${BT[bt++]}</div><div class="fx up">연구 성과 +6 · 사회적 피해 -3 · 신뢰 +6 · 연구팀·연구비 +3</div></div>`;fxs(0,"gl");setTimeout(()=>beep(880,.3),300)}
+upd({res:r,harm:h,trust:t,team:m});
+const nm=[["연구 성과",r,0],["사회적 피해",h,1],["신뢰",t,0],["연구팀·연구비",m,0]].filter(x=>x[1]).map(x=>`<span class="${(x[2]?x[1]<0:x[1]>0)?"up":"dn"}">${x[0]} ${x[1]>0?"+":""}${x[1]}</span>`).join(" · ");
+$("main").innerHTML=`<div class="box"><span class="tag">결과</span><div class="txt" style="min-height:0">${o[3]}</div><div class="fx">${nm}</div></div>${extra}<button class="go" onclick="next()">${i<O.length-1?"▶ 다음 상황":"▶ 결과 보기"}</button>`}
+function next(){i++;i<O.length?show():end()}
+function end(){const n=log.filter(x=>x==="N").length,v=log.length-n;let e;
+if(s.harm>=60)e=["🔥 위험한 성공","연구는 빛났지만 사회는 큰 대가를 치렀습니다. 성과가 곧 정당성은 아님을 보여 주는 결말입니다."];
+else if(s.res>=60&&s.harm<=30&&s.trust>=60)e=["🌟 인류를 위한 돌파구","ECHO-9은 치료·정수·재난 구조에 쓰이며 사회에 큰 도움이 되었습니다. 책임 있는 선택이 좋은 연구 성과로 이어진 결말입니다."];
+else if(s.res<25)e=["🕯️ 지켜낸 양심, 잃은 성과","사회는 안전해졌지만 연구는 멈췄습니다. 윤리적 선택에 따르는 비용을 생각하게 합니다."];
+else if(s.trust>=70&&s.harm<=35)e=["🤝 신뢰받는 과학자","성과는 빠르지 않았지만 시민과 동료의 신뢰 속에 연구를 이어 갑니다."];
+else e=["⚖️ 타협의 연구자","성과와 책임 사이에서 흔들린 결말입니다. 어떤 선택이 달랐다면 결과가 달라졌을지 되짚어 보세요."];
+const top=Object.keys(aff).sort((a,b)=>aff[b]-aff[a])[0];
+$("stage").innerHTML=`<div class="floor"></div><div class="who" style="--cc:${CH[top].c}"><span class="em">${CH[top].e}</span><span class="nm">${CH[top].n}</span></div>`;beep(660,.3);
+$("main").innerHTML=`<div class="box"><span class="tag">ENDING</span><h1>${e[0]}</h1><div class="txt" style="min-height:0">${e[1]}
+가장 신뢰하는 동료는 ${CH[top].n}입니다.</div>
+<div class="row"><span>가치 중립 쪽 선택</span><b>${n}회</b></div><div class="row"><span>가치 지향 쪽 선택</span><b>${v}회</b></div>
+<div>${log.map((x,j)=>`<span class="chip ${x}">${j+1} ${x==="N"?"중립":"지향"}</span>`).join("")}</div></div>
+<div id="disc"></div>
+<button class="go" onclick="start()">↻ 다시 도전 (새로운 상황 구성)</button>`;buildDisc(e,n,v)}
+const QS=["가장 고민한 선택은 무엇이며, 무엇을 기준으로 판단했는가?","연구자는 연구 결과의 쓰임에 책임을 져야 하는가, 사회와 정책의 몫인가?","연구비·연구팀 같은 현실적 조건은 윤리적 선택을 어디까지 제약하는가?","등장인물마다 요구가 달랐다. 이해관계가 충돌할 때 연구자는 어떤 원칙을 세워야 하는가?","가치 중립과 가치 지향 입장을 보완할 제도(윤리 심의, 정보 공개 등)는 무엇인가?"];
+let db,uid,room,nick,stance,P=[],Lk=[],Rs=[],RES,un=[],rp={},heard=false;
+const esc=t=>String(t==null?"":t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const note=t=>{const e=$("nt");if(e)e.textContent=t};
+const werr=()=>note("저장하지 못했습니다. 로그인했는지, 교사가 공유 권한을 ‘참여자(Contributor)’ 이상으로 설정했는지 확인하세요.");
+const chip=x=>`<span class="chip ${x}">${x==="N"?"가치 중립":"가치 지향"}</span>`;
+const by=(a,b)=>(a.t||0)-(b.t||0),cnt=id=>Lk.filter(x=>x.p===id).length,mine=id=>Lk.some(x=>x.p===id&&x.u===uid);
+function buildDisc(e,n,v){un.forEach(f=>f());un=[];P=[];Lk=[];Rs=[];rp={};db=null;
+RES={end:e[0],n,v,res:s.res,harm:s.harm,trust:s.trust,team:s.team};
+$("disc").innerHTML=`<div class="box"><span class="tag">💬 토론방</span><div class="txt" style="min-height:0">같은 반 친구들과 같은 학급 코드를 입력하면 한 토론방에서 만나 의견과 게임 결과를 함께 볼 수 있습니다.</div><input id="rm" maxlength="20" placeholder="학급 코드 (영문·숫자, 예: 2-3)"><input id="nk" maxlength="12" placeholder="이름(닉네임)"><select id="sp"><option value="N"${n>v?" selected":""}>내 입장: 가치 중립 (연구는 사실 탐구, 쓰임은 사회 몫)</option><option value="V"${n>v?"":" selected"}>내 입장: 가치 지향 (연구자도 결과에 책임)</option></select><button class="go" data-a="join">▶ 토론방 입장</button><div class="nt" id="nt"></div></div>`}
+async function join(){const r=$("rm").value.trim().toLowerCase().replace(/[^a-z0-9_-]/g,c=>"~"+c.charCodeAt(0).toString(36)).slice(0,60),nm=$("nk").value.trim();
+if(!r||!nm){note("학급 코드와 이름을 입력하세요.");return}
+room=r;nick=nm;stance=$("sp").value;uid=null;
+try{db=window.claude?await claude.use("db"):null;const u=window.claude?await claude.use("user"):null;uid=u?await u.id():null}catch(x){db=null}
+uid=uid||"g"+Math.random().toString(36).slice(2,9);
+$("disc").innerHTML=`<div class="box"><span class="tag">🏫 ${esc(room)} 토론방</span><div id="sum"></div><div class="nt" id="nt"></div></div>`+QS.map((q,k)=>`<div class="box"><span class="tag">토론 질문 ${k+1}</span><div class="q">${q}</div><div id="l${k}"></div><span class="nt" id="rl${k}"></span><textarea id="t${k}" maxlength="300" placeholder="내 생각을 적어 보세요 (300자 이내)"></textarea><button class="go" data-a="send" data-q="${k}">의견 올리기</button></div>`).join("")+`<button class="go" data-a="dl">📥 토론 기록 저장(.txt)</button>`;
+if(db){const b=`rooms/${room}`,ok=()=>{heard=true;note("")},er=x=>note("불러오기 오류: "+(x&&x.code||""));
+un.push(db.collection(b+"/posts").onSnapshot(sn=>{ok();P=sn.docs.map(d=>({id:d.id,...d.data()}));draw()},er));
+un.push(db.collection(b+"/likes").onSnapshot(sn=>{Lk=sn.docs.map(d=>d.data());draw()},er));
+un.push(db.collection(b+"/results").onSnapshot(sn=>{Rs=sn.docs.map(d=>d.data());draw()},er));
+heard=false;setTimeout(()=>{if(!heard)note("토론방 데이터를 아직 불러오지 못했습니다. 잠시 기다려 주세요.")},10000);
+db.doc(b+"/results/"+uid).set({name:nick,stance,...RES,t:Date.now()}).catch(werr)}
+else{note("공유 기능을 쓸 수 없는 상태입니다(로그인 필요). 이 화면에서만 기록됩니다.");Rs=[{name:nick,stance,...RES}]}
+draw()}
+function draw(){if(!$("sum"))return;
+const N=Rs.length,cn=Rs.filter(r=>r.stance==="N").length,cv=N-cn,avg=k=>N?Math.round(Rs.reduce((a,r)=>a+(+r[k]||0),0)/N):0,ec={};Rs.forEach(r=>ec[r.end]=(ec[r.end]||0)+1);
+$("sum").innerHTML=`<div class="txt" style="min-height:0"><b>참여 ${N}명</b> · 의견 ${P.length}개</div><div class="row"><span>가치 중립 ${cn}명</span><span>가치 지향 ${cv}명</span></div><div class="sb"><i style="width:${N?cn/N*100:50}%;background:var(--warn)"></i><i style="width:${N?cv/N*100:50}%;background:var(--ac)"></i></div><div class="fx">${Object.keys(ec).map(k=>esc(k)+" ×"+ec[k]).join(" · ")}</div><div class="fx">평균 · 연구 성과 ${avg("res")} · 사회적 피해 ${avg("harm")} · 신뢰 ${avg("trust")} · 연구팀·연구비 ${avg("team")}</div>`;
+const card=(p,rep)=>`<div class="${rep?"rep":"post"}"><b>${esc(p.name)}</b> ${chip(p.stance==="N"?"N":"V")}${rep?" ↪ 반론/보충":""}<div>${esc(p.text)}</div><button class="mini" data-a="lk" data-id="${esc(p.id)}">${mine(p.id)?"💚":"👍"} 공감 ${cnt(p.id)}</button>${rep?"":`<button class="mini" data-a="rp" data-id="${esc(p.id)}" data-q="${esc(p.q)}">↪ 반론하기</button>`}</div>`;
+QS.forEach((_,k)=>{const el=$("l"+k);if(!el)return;const tops=P.filter(p=>p.q===k&&!p.re).sort(by);
+el.innerHTML=tops.length?tops.map(p=>card(p)+P.filter(r=>r.re===p.id).sort(by).map(r=>card(r,1)).join("")).join(""):`<div class="fx">아직 의견이 없습니다. 첫 의견을 남겨 보세요!</div>`})}
+document.addEventListener("click",async ev=>{const b=ev.target.closest("[data-a]");if(!b)return;const a=b.dataset.a,q=+b.dataset.q;
+if(a==="join")return join();
+if(a==="lk"){if(!db){note("공유 기능을 쓸 수 없습니다.");return}const id=b.dataset.id,ref=db.doc(`rooms/${room}/likes/${id}_${uid}`);try{await(mine(id)?ref.delete():ref.set({p:id,u:uid,t:Date.now()}))}catch(x){werr()}}
+if(a==="rp"){rp[q]=b.dataset.id;const t=P.find(p=>p.id===b.dataset.id),l=$("rl"+q);l.textContent="↪ "+(t?t.name:"")+"님에게 반론/보충 중 (여기를 눌러 취소)";l.dataset.a="rc";l.dataset.q=q;l.style.cursor="pointer";$("t"+q).focus()}
+if(a==="rc"){delete rp[q];const l=$("rl"+q);l.textContent="";delete l.dataset.a}
+if(a==="send"){const t=$("t"+q).value.trim();if(!t)return;const d={q,text:t,name:nick,stance,uid,t:Date.now(),re:rp[q]||null};
+if(db){try{await db.collection(`rooms/${room}/posts`).add(d)}catch(x){werr();return}}else{P.push({id:"l"+Date.now(),...d})}
+$("t"+q).value="";delete rp[q];$("rl"+q).textContent="";draw();beep(660,.1)}
+if(a==="dl"){const txt=QS.map((qq,k)=>"["+(k+1)+"] "+qq+"\n"+P.filter(p=>p.q===k).sort(by).map(p=>(p.re?"   ↪ ":"- ")+p.name+"("+(p.stance==="N"?"중립":"지향")+"): "+p.text+" [공감 "+cnt(p.id)+"]").join("\n")).join("\n\n");
+try{const d=window.claude?await claude.use("downloads"):null;if(!d){note("저장 기능을 쓸 수 없습니다.");return}await d.save({filename:"토론기록-"+room+".txt",data:"학급 "+room+" 토론 기록\n\n"+txt})}catch(x){}}});
+start();
+</script>
+</body>
+</html>
